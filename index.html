@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FRC Scouting Dashboard – Lakeview (AdamBots Edition)</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="left">
+      <img id="teamLogo" src="logo.png" alt="AdamBots Logo" onerror="this.style.display='none'" />
+      <div class="title">
+        <h1>FRC Scouting Dashboard</h1>
+        <p class="subtitle">AdamBots-themed • Elo + OPR + Scouting Hybrid</p>
+      </div>
+    </div>
+    <div class="right">
+      <div class="quick">
+        <label class="micro">Home Team
+          <input id="homeTeam" value="245" />
+        </label>
+        <button id="btn-set-home" class="btn btn-secondary">Set</button>
+      </div>
+      <button id="btn-clear-cache" class="btn btn-secondary" title="Clear cached data">Clear Cache</button>
+      <a id="btn-download-csv" class="btn" href="#" download="predictions.csv">Export Predictions</a>
+    </div>
+  </header>
+
+  <section class="controls">
+    <div class="card">
+      <h3>Data Source</h3>
+      <div class="grid grid-3">
+        <label>Event Key
+          <input id="eventKey" placeholder="e.g., 2026milak" />
+        </label>
+        <label>Season (Year)
+          <input id="seasonYear" type="number" min="2016" max="2099" placeholder="2026" />
+        </label>
+        <label>The Blue Alliance API Key
+          <input id="tbaKey" type="password" placeholder="Paste your TBA Auth Key" />
+        </label>
+      </div>
+      <div class="row">
+        <button id="btn-save-key" class="btn">Save Key</button>
+        <button id="btn-load" class="btn btn-primary">Load Event Data</button>
+      </div>
+      <hr style="border:0;border-top:1px solid #27334a;margin:12px 0">
+      <h4>Scouting Data Sync</h4>
+      <div class="grid grid-3">
+        <label>Upload CSV
+          <input id="scoutFile" type="file" accept=".csv" />
+        </label>
+        <div class="row">
+          <button id="btn-upload-scout" class="btn">Upload / Refresh</button>
+          <button id="btn-clear-scout" class="btn btn-secondary">Clear Scouting</button>
+        </div>
+        <div>
+          <small class="help">Filters to current event if column <code>event_key</code> matches. Stored locally.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Model Settings</h3>
+      <div class="grid grid-3">
+        <label>Elo K-Factor
+          <input id="eloK" type="number" value="24" />
+        </label>
+        <label>Model Blend (Elo vs OPR)
+          <input id="blend" type="range" min="0" max="1" step="0.05" value="0.5" />
+          <small><span id="blendLabel">0.50</span> (0 = OPR only, 1 = Elo only)</small>
+        </label>
+        <label>Use Cached Data
+          <select id="useCache">
+            <option value="true" selected>Yes</option>
+            <option value="false">No</option>
+          </select>
+        </label>
+        <label>Scouting Weight
+          <input id="scoutWeight" type="range" min="0" max="0.6" step="0.05" value="0.20" />
+          <small><span id="scoutWeightLabel">0.20</span> (impact on OPR portion)</small>
+        </label>
+      </div>
+      <div class="row">
+        <button id="btn-run-models" class="btn btn-primary">Update Predictions</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="tabs">
+    <div class="tab-bar">
+      <button class="tab active" data-tab="teams">Teams</button>
+      <button class="tab" data-tab="matches">Matches</button>
+      <button class="tab" data-tab="predictions">Predictions</button>
+      <button class="tab" data-tab="picklist">Picklist</button>
+      <button class="tab" data-tab="coach">Coach</button>
+      <button class="tab" data-tab="strategy">Strategy</button>
+      <button class="tab" data-tab="scouting">Scouting</button>
+      <button class="tab" data-tab="charts">Charts</button>
+    </div>
+
+    <section id="tab-teams" class="tab-content active">
+      <div class="table-wrap">
+        <table id="tblTeams">
+          <thead>
+            <tr>
+              <th>Team</th>
+              <th>Nickname</th>
+              <th>Elo</th>
+              <th>OPR</th>
+              <th>W-L-T</th>
+              <th>Avg Pts</th>
+              <th>Role</th>
+              <th>Consistency</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-matches" class="tab-content">
+      <div class="table-wrap">
+        <table id="tblMatches">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Comp</th>
+              <th>Set-Match</th>
+              <th>Red</th>
+              <th>Blue</th>
+              <th>Red Score</th>
+              <th>Blue Score</th>
+              <th>Winner</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-predictions" class="tab-content">
+      <div class="table-wrap">
+        <table id="tblPredictions">
+          <thead>
+            <tr>
+              <th>Match</th>
+              <th>Red</th>
+              <th>Blue</th>
+              <th>Exp Red Pts</th>
+              <th>Exp Blue Pts</th>
+              <th>Red Win %</th>
+              <th>Blue Win %</th>
+              <th>Model</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-picklist" class="tab-content">
+      <div class="table-wrap">
+        <table id="tblPicklist">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Team</th>
+              <th>Composite Score</th>
+              <th>Elo</th>
+              <th>OPR</th>
+              <th>W-L-T</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-coach" class="tab-content">
+      <div class="coach-wrap">
+        <div class="coach-header">
+          <h3>Drive Coach View - Next Matches for <span id="coachTeam">245</span></h3>
+          <label>Show next <input id="coachCount" type="number" min="1" max="10" value="3"/> matches</label>
+          <button id="btn-refresh-coach" class="btn btn-primary">Refresh</button>
+        </div>
+        <div class="table-wrap">
+          <table id="tblCoach">
+            <thead>
+              <tr>
+                <th>Match</th>
+                <th>Time</th>
+                <th>Your Alliance</th>
+                <th>Opponents</th>
+                <th>Win %</th>
+                <th>Plan</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="coach-notes">
+          <h4>Quick Notes</h4>
+          <ul id="coachNotes"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-strategy" class="tab-content">
+      <div class="grid grid-3">
+        <label>Focus Team
+          <input id="strategyTeam" value="245" />
+        </label>
+        <label>Select Match (upcoming)
+          <select id="strategyMatch"></select>
+        </label>
+        <div class="row">
+          <button id="btn-build-strategy" class="btn btn-primary">Build Strategy</button>
+        </div>
+      </div>
+      <div id="strategyPanel" class="strategy-panel">
+        <div class="strategy-cards">
+          <div class="s-card">
+            <h4>Alliances</h4>
+            <div id="s-alliance"></div>
+          </div>
+          <div class="s-card">
+            <h4>Key Threats</h4>
+            <div id="s-threats"></div>
+          </div>
+          <div class="s-card">
+            <h4>Recommended Roles</h4>
+            <div id="s-roles"></div>
+          </div>
+          <div class="s-card">
+            <h4>Win Conditions</h4>
+            <div id="s-wincon"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-scouting" class="tab-content">
+      <div class="table-wrap">
+        <table id="tblScouting">
+          <thead>
+            <tr>
+              <th>Team</th>
+              <th>N Obs</th>
+              <th>Avg Contrib</th>
+              <th>Teleop</th>
+              <th>Endgame</th>
+              <th>Fuel</th>
+              <th>Climb%</th>
+              <th>Drv</th>
+              <th>Score</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-charts" class="tab-content">
+      <div class="charts">
+        <canvas id="eloDist" height="160"></canvas>
+        <canvas id="oprDist" height="160"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <small>
+      AdamBots-themed FRC event scouting. Enter your TBA API key and event key to begin. Data is cached locally.
+    </small>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

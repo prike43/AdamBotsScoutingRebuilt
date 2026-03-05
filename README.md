@@ -70,15 +70,6 @@ event_key, team_key, match_key, contributedPoints, TeleopPoints, EndgamePoints, 
 
 ## Deployment
 
-### GitHub Pages (Recommended)
-1. Create a GitHub repository
-2. Push these 3 files to main branch
-3. Settings → Pages → Deploy from `main` branch
-4. Your app is live at `https://yourusername.github.io/repo-name`
-
-### Netlify
-Drag and drop the 3 files to [netlify.com](https://netlify.com) for instant deployment
-
 ### iPad
 Copy files to iPad, open `index.html` in Safari. Add to Home Screen (Share → Add to Home Screen) for app-like experience.
 
@@ -128,6 +119,3 @@ frc-scouting-dashboard/
 
 Built with The Blue Alliance API. Themed for AdamBots FRC Team 245.
 
----
-
-Questions? Issues? Check your browser's Developer Console (F12) for error messages.

@@ -25,3 +25,19 @@ th{background:#0b1220;position:sticky;top:0}
 .badge-gold{background:#facc15;color:#111827;font-weight:800}
 .scout-note{color:#eab308;font-size:12px}
 tr.highlight-245 td{background:linear-gradient(90deg, rgba(250,204,21,0.12), transparent)}
+
+/* responsive adjustments for smaller viewports */
+@media (max-width: 800px) {
+  .controls { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .tab-bar { flex-wrap: wrap; }
+  .tab { flex: 1 1 auto; text-align: center; }
+  .row { flex-wrap: wrap; }
+}
+
+@media (max-width: 600px) {
+  .app-header { flex-direction: column; align-items: flex-start; }
+  .app-header .right { margin-top: 8px; }
+  table th, table td { padding: 6px; font-size: 12px; }
+}
+

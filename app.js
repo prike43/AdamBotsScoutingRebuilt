@@ -21,7 +21,7 @@ async function loadEventData(){ try{ const useCache=($('#useCache').value==='tru
   state.teams=teams; state.matches=matches.sort((a,b)=> (a.time||a.predicted_time||0)-(b.time||b.predicted_time||0)); state.rankings=rankings; state.oprs=oprs; state.teamMap=new Map(teams.map(t=>[t.key,t]));
   // Fetch score breakdowns for played matches
   const playedMatches = state.matches.filter(m => m.alliances && m.alliances.red && m.alliances.red.score != null && m.alliances.red.score >= 0);
-  const breakdownPromises = playedMatches.map(m => apiCached('/match/' + m.key, useCache).then(d => { m.score_breakdown = d.score_breakdown; }).catch(e => console.warn('Failed to fetch breakdown for ' + m.key, e)));
+  const breakdownPromises = playedMatches.map(m => apiCached('/match/' + m.key, useCache).then(d => { m.score_breakdown = d.score_breakdown; console.log('Fetched breakdown for ' + m.key, d.score_breakdown); }).catch(e => console.warn('Failed to fetch breakdown for ' + m.key, e)));
   await Promise.all(breakdownPromises);
   computeTeamStats(); computeElo(); runPredictions(); populateStrategyMatchSelector(); renderAll();
 } catch(e){ console.error(e); alert('Error loading data: '+e.message);} }

@@ -231,6 +231,17 @@
     </section>
 
     <section id="tab-scouting" class="tab-content">
+      <div class="card scouting-controls">
+        <h3>Load Scouting CSV</h3>
+        <label>CSV File URL
+          <input id="scoutCsvUrl" placeholder="Paste Google Drive or direct CSV link" />
+        </label>
+        <div class="row">
+          <button id="btn-load-scout-url" class="btn btn-primary">Load CSV</button>
+          <button id="btn-clear-scout" class="btn btn-secondary">Clear Scouting</button>
+        </div>
+        <small class="help">Example Google Drive link: https://drive.google.com/file/d/FILE_ID/view?usp=sharing</small>
+      </div>
       <div class="table-wrap">
         <table id="tblScouting">
           <thead>

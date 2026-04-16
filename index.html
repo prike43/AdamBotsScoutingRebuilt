@@ -98,11 +98,11 @@
       <button class="tab active" data-tab="teams">Teams</button>
       <button class="tab" data-tab="matches">Matches</button>
       <button class="tab" data-tab="predictions">Predictions</button>
-      <button class="tab" data-tab="picklist">Picklist</button>
       <button class="tab" data-tab="coach">Coach</button>
       <button class="tab" data-tab="strategy">Strategy</button>
       <button class="tab" data-tab="scouting">Scouting</button>
       <button class="tab" data-tab="charts">Charts</button>
+      <button class="tab" data-tab="rebuilt">Rebuilt Data</button>
     </div>
 
     <section id="tab-teams" class="tab-content active">
@@ -159,30 +159,6 @@
               <th>Red Win %</th>
               <th>Blue Win %</th>
               <th>Model</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section id="tab-picklist" class="tab-content">
-      <div class="table-wrap">
-        <table id="tblPicklist">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th data-sort="team">Team</th>
-              <th data-sort="composite">Composite Score</th>
-              <th data-sort="elo">Elo</th>
-              <th data-sort="opr">OPR</th>
-              <th data-sort="wlt">W-L-T</th>
-              <th data-sort="maxAuton">Max Auton Score</th>
-              <th data-sort="maxTeleop">Max Teleop Score</th>
-              <th data-sort="maxEndgame">Max Endgame Score</th>
-              <th data-sort="qDefense">Avg Defense Quality</th>
-              <th data-sort="qDriver">Avg Driver Skill</th>
-              <th data-sort="qScoring">Avg Scoring Skill</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -261,10 +237,13 @@
               <th>Team</th>
               <th>N Obs</th>
               <th>Avg Contrib</th>
+              <th>Auto</th>
               <th>Teleop</th>
               <th>Endgame</th>
               <th>Fuel</th>
               <th>Climb%</th>
+              <th>Climb Pts</th>
+              <th>Defense</th>
               <th>Drv</th>
               <th>Score</th>
               <th>Notes</th>
@@ -280,6 +259,17 @@
         <canvas id="eloDist" height="160"></canvas>
         <canvas id="oprDist" height="160"></canvas>
       </div>
+    </section>
+
+    <section id="tab-rebuilt" class="tab-content">
+      <div class="card">
+        <h3>Team Summary</h3>
+        <label>Enter Team Number
+          <input id="rebuiltTeam" placeholder="e.g., 245" />
+        </label>
+        <button id="btn-rebuilt-lookup" class="btn">Get Summary</button>
+      </div>
+      <div id="rebuiltSummary"></div>
     </section>
   </main>
 

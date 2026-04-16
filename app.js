@@ -2,7 +2,7 @@
 const API_BASE='https://www.thebluealliance.com/api/v3';
 const DEFAULT_HOME_TEAM='frc245';
 let state={tbaKey:'',eventKey:'',year:(new Date()).getFullYear(),teams:[],matches:[],rankings:null,oprs:null,teamMap:new Map(),elo:new Map(),stats:new Map(),predictions:[],kFactor:24,blend:0.5,homeTeam:DEFAULT_HOME_TEAM,rebuiltData:[]};
-state.rebuiltData = [{"Team": "6002", "Alliance": "Blue", "Alliances Blue Score": 331, "Alliances Red Score": 466, "Winning Alliance": "red"}]; // Placeholder: replace with full JSON from Excel
+// state.rebuiltData = [{"Team": "6002", "Alliance": "Blue", "Alliances Blue Score": 331, "Alliances Red Score": 466, "Winning Alliance": "red"}]; // Placeholder: replace with full JSON from Excel
 const $=(s)=>document.querySelector(s); const $$=(s)=>Array.from(document.querySelectorAll(s));
 const fmtTeam=(k)=>k.replace('frc','');
 const toLocal=(secs)=>secs? new Date(secs*1000).toLocaleString() : '-';
